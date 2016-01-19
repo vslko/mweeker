@@ -1,0 +1,321 @@
+/*
+ * mWeeker v.0.1 Stylesheet
+ * Copyright (c) 2013 Vasilij Olhov
+ * Dual licensed under the MIT and GPL licenses
+ */
+
+.mweeker {
+	border: 1px solid #808080;
+	border-radius: 4px;
+    font-family: Tahoma;
+	font-size: 12px;
+	color: #555;
+	padding: 0;
+	margin:0;
+}
+
+.mweeker .clr {
+    clear:both;
+    padding:0;
+    margin:0;
+    width: 0;
+    height: 0 !important;
+    font-size:0;
+    line-height:0;
+}
+
+
+/* === HEADER === */
+.mweeker div.mweeker-header {
+	background-color: #808080;
+    border-radius: 4px 4px 0 0;
+}
+.mweeker div.mweeker-header .mweeker-navigation {
+	height:22px;
+    padding:2px 8px 2px 8px;
+}
+.mweeker div.mweeker-header div.title {
+    float: left;
+    font-size: 12px;
+    line-height: 19px;
+    font-weight: bold;
+    width:33%;
+    color: #fff;
+}
+.mweeker div.mweeker-header div.mweeker-weekdays {
+	font-size: 12px;
+	background-color: #EEEEEE;
+	color: #666;
+}
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday {
+	float: left;
+	text-align: center;
+	border: 1px solid #ddd;
+	border-left: 0;
+	padding: 6px;
+	overflow:hidden;
+}
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday.today { color: #666; font-weight:bold; }
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday.monday {}
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday.tuesday {}
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday.wednesday {}
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday.thursday {}
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday.friday {}
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday.saturday { color:#999; }
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday.sunday { color:#999; }
+.mweeker div.mweeker-header .mweeker-navigation div.nav-btn {
+    float: right;
+    margin-left:3px;
+    margin-right:3px;
+    width: 20px;
+    height:20px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-image: url('icons.png')
+}
+.mweeker div.mweeker-header .mweeker-navigation div.nav-btn.prev-month { background-position: 0 0; }
+.mweeker div.mweeker-header .mweeker-navigation div.nav-btn.prev-week { background-position: 0 -20px; }
+.mweeker div.mweeker-header .mweeker-navigation div.nav-btn.curr-week { background-position: 0 -40px; }
+.mweeker div.mweeker-header .mweeker-navigation div.nav-btn.next-week { background-position: 0 -60px; }
+.mweeker div.mweeker-header .mweeker-navigation div.nav-btn.next-month { background-position: 0 -80px; }
+
+
+
+
+
+/* === BODY === */
+.mweeker div.mweeker-body {
+	background-color:#fff;
+	width: 100%;
+	overflow: auto;
+}
+.mweeker div.mweeker-body div.hour {
+    float:left;
+    overflow:hidden;
+    margin:0;
+	height: auto;
+	font-size:12px;
+    color: #777;
+    padding: 2px;
+    padding-left: 6px;
+}
+.mweeker div.mweeker-body div.hour.monday { padding-left:2px; }
+.mweeker div.mweeker-body div.hour.tuesday { }
+.mweeker div.mweeker-body div.hour.wednesday { }
+.mweeker div.mweeker-body div.hour.thursday { }
+.mweeker div.mweeker-body div.hour.friday { }
+.mweeker div.mweeker-body div.hour.saturday { }
+.mweeker div.mweeker-body div.hour.sunday { padding-right:2px; }
+
+
+
+
+/* === FOOTER === */
+.mweeker div.mweeker-footer {
+	overflow: hidden;
+	height: 24px;
+	border-top:1px solid #ddd;
+	background-color:#eee;
+	text-align: right;
+	font-size: 10px;
+	line-height: 24px;
+	padding-right: 18px;
+    border-radius: 0 0 4px 4px;
+}
+
+
+
+/* ============== EVENTS ============== */
+.mweeker-body div.hour div.event {
+    overflow: hidden;
+    margin: 1px;
+    text-align: left;
+    padding:3px;
+    font-size:11px;
+    color: #999;
+    background-color: #fff;
+    border:1px solid #aaa;
+    border-radius: 5px;
+    cursor:pointer; *cursor:hand;
+    background-color: #FAF5E7;
+}
+.mweeker-body div.hour div.event:hover {
+   border:1px solid #808080;
+   color: #555;
+}
+
+div.mweeker-popup-window {
+    margin: 0;
+    display: none;
+    position: fixed;
+    z-index: 999;
+    border: 1px solid #ddd;
+    background-color: #FFF;
+    padding: 5px;
+    opacity: 0.8;
+    font-family: Tahoma;
+    font-size:11px;
+    color: #444;
+    -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
+    -moz-box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
+    -o-box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday div.event-add-button {
+	float:right;
+	width:14px;
+	margin-right:2px;
+	height:14px;
+    background-image: url('icons.png');
+    background-repeat: no-repeat;
+    background-position: -3px -104px;
+    cursor:pointer; *cursor:hand;
+}
+.mweeker div.mweeker-header div.mweeker-weekdays div.weekday div.event-add-button:hover {
+    background-position: -3px -123px;
+}
+
+
+
+
+
+
+/* ============== EVENT'S WINDOW AND FORM ============== */
+
+div.mweeker-event-window-overlay {
+    position: fixed;
+    z-index: 10000;
+    opacity: 0.5;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    background: #fff;
+    display: none;
+}
+
+.mweeker-event-window {
+    position: fixed;
+    display:none;
+    z-index: 11000;
+    left: 50%;
+    top: 200px;
+    width: 360px;
+    padding-bottom: 2px;
+    background: #FFF;
+    font-family: Tahoma;
+    color: #777;
+    border: 1px solid #AAA;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.3);
+}
+.mweeker-event-window div.header {
+    background-color:#DDD;
+    padding: 8px 8px 6px 8px;
+    border-bottom: 1px solid #AAA;
+    border-top-left-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
+}
+.mweeker-event-window div.header span.title {
+    color: #555;
+    font-size: 13px;
+    margin: 0;
+}
+.mweeker-event-window div.header span.close_button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-image: url('icons.png');
+    background-position: -3px -143px;
+    background-repeat: no-repeat;
+    z-index: 2;
+}
+.mweeker-event-window div.body {
+    padding:12px;
+    font-size: 12px;
+    color: #555;
+}
+.mweeker-event-window div.body div.form {
+	padding-bottom: 10px;
+	border-bottom:1px solid #DDD;
+}
+
+.mweeker-event-window div.body label {
+    display: block;
+    float: left;
+    width: 110px;
+    padding-top: 6px;
+    text-align: left;
+}
+
+.mweeker-event-window div.body div.form input,
+.mweeker-event-window div.body div.form select,
+.mweeker-event-window div.body div.form textarea {
+    width: 214px;
+    margin: 3px;
+    padding: 2px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    font-size: 12px;
+	background-color: #F9F9F9;
+    border: 1px solid #AAA;
+    color: #555;
+    resize: none;
+}
+
+
+.mweeker-event-window div.button {
+ 	display: block;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 10px;
+    padding: 3px;
+    text-align: center;
+    width: 70px;
+    font-family: Tahoma;
+    border-radius: 4px;
+    text-align: center;
+    background-color: #F7F7F7;
+    border: 1px solid #999999;
+    color: #aaa;
+    cursor: pointer; *cursor: hand;
+}
+.mweeker-event-window div.button:hover { background-color:#FFF; color:#666; border: 1px solid #aaa; }
+.mweeker-event-window div.button.submit-button {
+	float: right;
+	margin-right: 8px;
+}
+.mweeker-event-window div.button.submit-button:hover { }
+
+.mweeker-event-window div.button.remove-button {
+	float: left;
+	margin-left: 0;
+	border: 1px solid #A44;
+	color: #A44;
+}
+.mweeker-event-window div.button.remove-button:hover { border: 1px solid #600; color: #600; }
+
+.mweeker-event-window div.button.progress {
+    background-image: url('loading.gif') !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    color: #DDD !important;
+}
+

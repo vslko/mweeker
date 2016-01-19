@@ -1,0 +1,338 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<style type="text/css">
+  body { background-color:#F5F5F5; font-size: 12px; font-family: Tahoma; color: #555; margin: 24px; }
+  .section { background: none repeat scroll 0 0 #FFFFFF; box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1); margin-bottom: 27px; padding: 20px; line-height: 18px; }
+  ul.section { padding-left: 32px; }
+  .section-title { font-size: 20px;line-height: 22px;margin-bottom: 10px;margin-top: 10px;font-weight: normal;}
+  .in-section-title {font-size: 18px;line-height: 20px;margin-bottom: 8px;font-weight: normal;}
+  pre {background-color: #FAFAFA;border: 1px solid #CCCCCC;color: #000000;font-size: 11px;padding: 4px;}
+  a {color: #006096;text-decoration:none;font-weight: bold; }
+  a:hover { text-decaration: underline; }
+  .definition { display: inline-block; font-family: monospace;font-size: 15px;color: #0070A6;}
+  .typization { margin-left: 30px; font-style: italic; }
+  .description {display:block;margin-bottom: 20px; margin-left: 10px;}
+</style>
+
+<link rel="stylesheet" type="text/css" href="./css/mweeker.css" />
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="./mweeker.js"></script>
+<script type="text/javascript">
+
+$(document).ready( function(){
+
+    $('div#calendar').mWeeker({
+                        event    : {
+                                    url_get		: './server/get.php',
+                                    url_update	: './server/update.php',
+                                    url_add		: './server/add.php',
+                                    url_remove	: './server/remove.php',
+                                    view	: $('div#w-view'),
+                                    popup	: $('div#w-hint'),
+                                    addForm	: $('div#w-form'),
+                                    updForm	: $('div#w-form')
+                        },
+                        callback: {
+                                   onEventsLoad			: function(items) { out('<b>[onEventsLoad]:</b><br>Items:<br>'+print_r(items)); },
+                                   onEventAdd			: function(message, item) { out('<b>[onEventAdd]:</b> ['+message+']<br>'+print_r(item)); },
+                                   onEventAddWindow 	: function(winObject, date) { out('<b>[onEventAddWindow]:</b> on date ['+date+']'); return true; },
+                                   onEventUpdate		: function(message, item) { out('<b>[onEventUpdate]:</b> ['+message+']<br>'+print_r(item)); },
+                                   onEventUpdateWindow	: function(winObject, item) { out('<b>[onEventUpdateWindow]:</b><br>'+print_r(item)); return true; },
+                                   onEventRemove		: function(message, item) { out('<b>[onEventRemove]:</b> ['+message+']<br>'+print_r(item)); },
+                                   onError				: function(message) { out('Event [onError]: '+message); }
+                        }
+    });
+
+    $('button#clear').on('click', function() { $('div#output').empty(); });
+	$('button#get_events').on('click', function() { $('div#calendar').mWeeker('getEvents', {} ); });
+	$('button#clr_events_all').on('click', function() {	$('div#calendar').mWeeker('clearEvents'); });
+	$('button#clr_events_wait').on('click', function() { $('div#calendar').mWeeker( 'clearEvents', {field:'state',value:'wait'} ); });
+
+});
+
+function out( message ) {
+	$('div#output').append('<div>&gt;&gt; '+message+'<br></div>')
+				   .scrollTop( $('div#output')[0].scrollHeight );
+};
+
+function print_r(arr, level) {
+    var print_red_text = "";
+    if(!level) level = 0;
+    var level_padding = "";
+    for(var j=0; j<level+1; j++) level_padding += "&nbsp;&nbsp;&nbsp;&nbsp;";
+    if(typeof(arr) == 'object') {
+        for(var item in arr) {
+            var value = arr[item];
+            if(typeof(value) == 'object') {
+                print_red_text += level_padding + "'" + item + "'&nbsp;:<br>";
+                print_red_text += print_r(value,level+1);
+			}
+            else { print_red_text += level_padding + "'" + item + "'&nbsp;=>&nbsp;\"" + value + "\"<br>"; }
+        }
+    }
+
+    else  print_red_text = "===>"+arr+"<===("+typeof(arr)+")";
+    return print_red_text;
+};
+
+</script>
+<head>
+<title>Mantella Weeker</title>
+</head>
+<body>
+<style type="text/css">
+	div.state_wait 		{ border-left: 4px solid #FCD703; padding-left:3px;  }
+	div.state_cancel 	{ border-left: 4px solid #D20000; padding-left:3px; }
+	div.state_done 		{ border-left: 4px solid #00B700; padding-left:3px; }
+
+	button {
+		border:1px solid #aaa;
+		background-color: #E5E5E5;
+		padding: 4px;
+		margin:4px;
+		color: #555;
+		width: 120px;
+		font-size:11px;
+		cursor:pointer; *cursor:hand;
+		border-radius: 4px;
+	}
+	button:hover {
+		background-color: #F7F7F7;
+		border:1px solid #ccc;
+		color: #222;
+	}
+</style>
+<div class="section-title">mWeeker demo</div>
+<div class="section">
+
+	<div id="calendar" style="float:left; width:780px; height:420px;"></div>
+
+	<div style="float:left; margin-left:20px;">
+		<button id="get_events">Fetch events</button><br>
+		<button id="clr_events_wait">Erase [wait] events</button><br>
+		<button id="clr_events_all">Erase all events</button>
+    	<br><br>
+    	<button id="clear" style="float:right;">Clear output</button>
+	</div>
+
+	<div id="output" style="border:1px solid #CFCFCF; float:left; overflow:auto; font-size:10px; margin-left:20px; line-height:11px; width:400px; height:420px;">output..</div>
+
+	<div style="clear:both;"></div>
+
+
+	<div id="w-view" style="display:none;">
+		<div class="state_{state}"><b>{time}</b>&nbsp;{name}</div>
+	</div>
+	<div id="w-hint" style="display:none;">
+		ID: {id}<br>
+		Date: {date}<br>
+		Time: {time}<br>
+		Name: {name}<br>
+		State: {state}
+	</div>
+
+	<div id="w-form" style="display:none;">
+		<label>Date</label>
+		<input type="text" value="" name="date"><br>
+		<label>Name</label>
+		<input type="text" value="" name="name"><br>
+		<label>State</label>
+		<select name="state">
+		  <option value="wait">Wait</option>
+		  <option value="done">Done</option>
+		  <option value="cancel">Cancel</option>
+		</select>
+	</div>
+
+</div>
+
+<div class="section-title">Features</div>
+<ul class="section">
+    <li>Week calendars with events</li>
+    <li>BuildIn form to events modify</li>
+    <li>Custom mapping for views</li>
+    <li>On events callback functions support</li>
+    <li>Autoload event on init</li>
+    <li>Obligatory fields [id, date and time] in event structure.</li>
+</ul>
+
+<div class="section-title">Getting started</div>
+<div class="section">
+	<div class="in-section-title">Insert in head</div>
+	<pre>&lt;!-- basic style --&gt;
+&lt;link rel="stylesheet" type="text/css" href="your_path/css/mweeker.css" /&gt;
+&lt;!-- required javascripts --&gt;
+&lt;script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="your_path/js/mweeker.js"&gt;&lt;/script&gt;</pre>
+	<div class="in-section-title">Insert in body</div>
+	<pre>&lt;div id="calendar" style="float:left; width:780px; height:420px;"&gt;&lt;/div&gt;
+
+&lt;div id="w-view" style="display:none;"&gt;
+	&lt;div class="state_{state}"&gt;&lt;b&gt;{time}&lt;/b&gt;&nbsp;{name}&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="w-hint" style="display:none;"&gt;
+	ID: {id}&lt;br&gt;
+	Date: {date}&lt;br&gt;
+	Time: {time}&lt;br&gt;
+	Name: {name}&lt;br&gt;
+	State: {state}
+&lt;/div&gt;
+&lt;div id="w-form" style="display:none;"&gt;
+	&lt;label&gt;Date&lt;/label&gt;
+	&lt;input type="text" value="" name="date"&gt;&lt;br&gt;
+	&lt;label&gt;Name&lt;/label&gt;
+	&lt;input type="text" value="" name="name"&gt;&lt;br&gt;
+	&lt;label&gt;State&lt;/label&gt;
+	&lt;select name="state"&gt;
+	  &lt;option value="wait"&gt;Wait&lt;/option&gt;
+	  &lt;option value="done"&gt;Done&lt;/option&gt;
+	  &lt;option value="cancel"&gt;Cancel&lt;/option&gt;
+	&lt;/select&gt;
+&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+$(document).ready( function(){
+    $('div#calendar').mWeeker({
+		event : {
+			url_get		: './server/get.php',
+			url_update	: './server/update.php',
+			url_add		: './server/add.php',
+			url_remove	: './server/remove.php',
+			view	: $('div#w-view'),
+			popup	: $('div#w-hint'),
+			addForm	: $('div#w-form'),
+			updForm	: $('div#w-form')
+		}
+	});
+});
+&lt;/script&gt;</pre>
+
+</div>
+
+
+<div class="section-title">Responses from server</div>
+<div class="section">
+	<div class="in-section-title">on Load</div>
+	<pre>{
+  success: true/false, // error indicator
+  message: 'your message here', // successfull or error message
+  data: [ // array of items
+    {id:1,date:'YYYY-MM-DD HH:MI', ..},
+    {id:2,date:'YYYY-MM-DD HH:MI', ..},
+    {id:3,date:'YYYY-MM-DD HH:MI', ..},
+    ..
+  ]
+}</pre>
+	<div class="in-section-title">on Add</div>
+	<pre>{
+  success: true/false, // error indicator
+  message: 'your message here', // successfull or error message
+  data: {id:N,date:'YYYY-MM-DD HH:MI', ..} // added event full object
+}</pre>
+	<div class="in-section-title">on Update</div>
+	<pre>{
+  success: true/false, // error indicator
+  message: 'your message here', // successfull or error message
+  data: {id:N,date:'YYYY-MM-DD HH:MI', ..} // updated event full object
+}</pre>
+	<div class="in-section-title">on Remove</div>
+	<pre>{
+  success: true/false, // error indicator
+  message: 'your message here', // successfull or error message
+  data: N // removed event ID
+}</pre>
+</div>
+
+<div class="section-title">Documentation</div>
+<div class="section">
+
+	<div class="in-section-title">Options</div>
+	<span class="definition">now</span><span class="typization">Type: Date object, Default: new Date()</span>
+	<span class="description">Visible week on initialization.</span>
+
+	<span class="definition">locale</span><span class="typization">Type: object, Default: english locale</span>
+	<span class="description">Translated phrases</span>
+	<span class="definition">locale.buttons</span><span class="typization">Type: object, Default: english locale</span>
+	<span class="description">Translations for buttons. Contents such fields:<br>
+		prev_month     : "Previous month",<br>
+		prev_week      : "Previous week",<br>
+        curr_week      : "Current week",<br>
+        next_week      : "Next week", <br>
+        next_month     : "Next month",<br>
+        create_event	: "Create",<br>
+        modify_event	: "Save", <br>
+        remove_event	: "Remove"
+	</span>
+	<span class="definition">locale.captions</span><span class="typization">Type: object, Default: english locale</span>
+	<span class="description">Translations for windows captions. Contents such fields:<br>
+		title			: "Events: ", <br>
+	    create_event	: "Create a new event",<br>
+    	modify_event	: "Update event",<br>
+    	footer			: "From %from% to %to% was found %records% items"
+	</span>
+    <span class="definition">locale.days</span><span class="typization">Type: array, Default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Sunday"]</span>
+    <span class="description">Translations for weekdays</span>
+    <span class="definition">locale.long_months</span><span class="typization">Type: array, Default: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]</span>
+    <span class="description">Translations for month long names</span>
+    <span class="definition">locale.short_months</span><span class="typization">Type: array, Default: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]</span>
+    <span class="description">Translations for month short names</span>
+    <span class="definition">locale.error</span><span class="typization">Type: string, Default: "Application server error"</span>
+    <span class="description">Translations for undefined server error</span>
+	<span class="definition">event</span><span class="typization">Type: object, Default: {}</span>
+	<span class="description">Parameters for events handle</span>
+	<span class="definition">event.get_url</span><span class="typization">Type: string, Default: "./"</span>
+	<span class="description">Url for request to fetch events from server</span>
+	<span class="definition">event.add_url</span><span class="typization">Type: string, Default: "./add"</span>
+	<span class="description">Url for request to add new event</span>
+	<span class="definition">event.update_url</span><span class="typization">Type: string, Default: "./update"</span>
+	<span class="description">Url for request to update exists event</span>
+	<span class="definition">event.remove_url</span><span class="typization">Type: string, Default: "./remove"</span>
+	<span class="description">Url for request to remove event</span>
+	<span class="definition">event.params</span><span class="typization">Type: object, Default: {}</span>
+	<span class="description">Additional parameter for request to server</span>
+	<span class="definition">event.view</span><span class="typization">Type: jquery-object / string, Default: "{id}"</span>
+	<span class="description">Template for event imaging in calendar</span>
+	<span class="definition">event.popup</span><span class="typization">Type: jquery-object, Default: null</span>
+	<span class="description">Template to display additional information in popup window on event hover</span>
+	<span class="definition">event.addForm</span><span class="typization">Type: jquery-object, Default: null</span>
+	<span class="description">Template for form in window for add new event</span>
+	<span class="definition">event.updForm</span><span class="typization">Type: jquery-object, Default: null</span>
+	<span class="description">Template for form in window for modify event</span>
+	<span class="definition">callback</span><span class="typization">Type: object, Default: {}</span>
+	<span class="description">Callback function on events called, details see in section "Events"</span>
+	<span class="definition">autoload</span><span class="typization">Type: boolean, Default: true</span>
+	<span class="description">Load events from server on calendar init and dates change</span>
+
+	<div class="in-section-title">Methods</div>
+	<span class="definition">object.mWeeker('loadEvents', params )</span><span class="typization">Argument: object</span>
+	<span class="description">Fetch event from server. Argument params is additional object to send in request</span>
+	<span class="definition">object.mWeeker('clearEvents', condition )</span><span class="typization">Argument: object / null</span>
+	<span class="description">Erase events from calendar. If condition is null or false - erase all events.<br>
+	If condition is object in format {field:'?', value:'?'}, then erase only events with this value in defined field</span>
+
+	<div class="in-section-title">Events</div>
+	<span class="definition">callback.onEventsLoad( items:array_of_objects )</span>
+	<span class="description">Triggered when events are loaded from server. Contains all events.</span>
+	<span class="definition">callback.onEventAddWindow( win:jquery_object, date: string ) : boolean</span>
+	<span class="description">Triggered when is opened window for event add. Contents object of window and date.<br>
+	Must return boolean: false, if is denied to add new event, else true</span>
+	<span class="definition">callback.onEventAdd( message:string, item:object )</span>
+	<span class="description">Triggered when events is added. Contents successfully message and added event.</span>
+	<span class="definition">callback.onEventUpdateWindow( win:jquery_object, event:object ) : boolean</span>
+	<span class="description">Triggered when is opened window for event update. Contents object of window and object of modified event.<br>
+	Must return boolean: false, if is denied to modify event, else true</span>
+	<span class="definition">callback.onEventUpdate( message:string, item:object )</span>
+	<span class="description">Triggered when event is moved. Contents successfully message and modified event.</span>
+	<span class="definition">callback.onEventRemove( message:string, item:object )</span>
+	<span class="description">Triggered when event is removed. Contents successfully message and removed event.</span>
+	<span class="definition">callback.onError( message:string )</span>
+	<span class="description">Triggered when except error with server communication</span>
+
+</div>
+
+</body>
+</html>
+
